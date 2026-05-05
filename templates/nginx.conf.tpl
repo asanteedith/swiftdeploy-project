@@ -1,0 +1,38 @@
+events {}
+
+http {
+
+    log_format custom '$time_iso8601 | $status | ${request_time}s | $upstream_addr | $request';
+
+    access_log /var/log/nginx/access.log custom;
+
+    server {
+
+        listen 80;
+
+        location / {
+            proxy_pass http://app:3000;
+
+            proxy_read_timeout 60;
+
+            proxy_set_header Host $host;
+
+            proxy_set_header X-Real-IP $remote_addr;
+
+            add_header X-Deployed-By swiftdeploy;
+
+        }
+
+        error_page 502 503 504 /error.json;
+
+        location = /error.json {
+
+            default_type application/json;
+
+            return 502 '{"error":"bad gateway","code":502,"service":"app","contact":"admin"}';
+
+        }
+
+    }
+
+}
