@@ -1,5 +1,6 @@
 Live Demo: http://localhost:8080
 # SwiftDeploy Project
+
 SwiftDeploy is a CLI tool that builds, deploys, and manages a containerized application stack from a single declarative manifest.yaml.
 Instead of manually configuring infrastructure, SwiftDeploy generates all required configurations and controls the lifecycle of the system.
 
