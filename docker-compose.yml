@@ -1,16 +1,18 @@
 version: "3.8"
 
+
+
 services:
 
   app:
 
-    image: swift-deploy-1-node:latest
+    build: ./app
+
+    container_name: app
 
     environment:
 
       - MODE=stable
-
-      - APP_VERSION=v1
 
       - APP_PORT=3000
 
@@ -20,17 +22,11 @@ services:
 
     restart: always
 
-    healthcheck:
-
-      test: ["CMD", "curl", "-f", "http://localhost:3000/healthz"]
-
-      interval: 10s
-
-      retries: 5
-
   nginx:
 
     image: nginx:latest
+
+    container_name: nginx
 
     ports:
 
@@ -47,6 +43,8 @@ services:
     networks:
 
       - swiftdeploy-net
+
+    restart: always
 
 networks:
 

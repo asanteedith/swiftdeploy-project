@@ -1,28 +1,64 @@
 from flask import Flask, request, jsonify
 
-import os, time, random
+import time, random
+
+from collections import defaultdict
 
 app = Flask(__name__)
 
-MODE = os.getenv("MODE", "stable")
+MODE = "stable"
 
-APP_VERSION = os.getenv("APP_VERSION", "v1")
+start_time = time.time()
 
-START = time.time()
+request_count = defaultdict(int)
 
-CHAOS = {"mode": None, "rate": 0}
+request_durations = []
+
+chaos_mode = 0
+
+error_rate = 0
+
+slow_duration = 0
+
+@app.after_request
+
+def add_headers(response):
+
+    if MODE == "canary":
+
+        response.headers["X-Mode"] = "canary"
+
+    return response
 
 @app.route("/")
 
 def home():
 
+    global chaos_mode
+
+    start = time.time()
+
+    if chaos_mode == 1:
+
+        time.sleep(slow_duration)
+
+    if chaos_mode == 2 and random.random() < error_rate:
+
+        request_count[(request.method,"/","500")] += 1
+
+        return jsonify({"error":"chaos"}), 500
+
+    duration = time.time() - start
+
+    request_durations.append(duration)
+
+    request_count[(request.method,"/","200")] += 1
+
     return jsonify({
 
-        "message": "welcome",
+        "message":"welcome",
 
         "mode": MODE,
-
-        "version": APP_VERSION,
 
         "timestamp": time.time()
 
@@ -32,11 +68,13 @@ def home():
 
 def health():
 
+    request_count[(request.method,"/healthz","200")] += 1
+
     return jsonify({
 
-        "status": "ok",
+        "status":"ok",
 
-        "uptime": int(time.time() - START)
+        "uptime": int(time.time()-start_time)
 
     })
 
@@ -44,46 +82,62 @@ def health():
 
 def chaos():
 
-    global CHAOS
-
-    if MODE != "canary":
-
-        return jsonify({"error": "not allowed"}), 403
+    global chaos_mode, error_rate, slow_duration
 
     data = request.json
 
     if data["mode"] == "slow":
 
-        time.sleep(data.get("duration", 1))
+        chaos_mode = 1
+
+        slow_duration = data["duration"]
 
     elif data["mode"] == "error":
 
-        CHAOS = {"mode": "error", "rate": data.get("rate", 0.5)}
+        chaos_mode = 2
+
+        error_rate = data["rate"]
 
     elif data["mode"] == "recover":
 
-        CHAOS = {"mode": None, "rate": 0}
+        chaos_mode = 0
 
-    return jsonify({"status": "updated"})
+    return jsonify({"status":"updated"})
 
-@app.before_request
+@app.route("/metrics")
 
-def inject():
+def metrics():
 
-    if CHAOS["mode"] == "error":
+    uptime = int(time.time() - start_time)
 
-        if random.random() < CHAOS["rate"]:
+    lines = []
 
-            return jsonify({"error": "failure"}), 500
+    lines.append(f"app_uptime_seconds {uptime}")
 
-@app.after_request
+    lines.append(f"app_mode {1 if MODE=='canary' else 0}")
 
-def headers(resp):
+    lines.append(f"chaos_active {chaos_mode}")
 
-    if MODE == "canary":
+    for (method,path,status),count in request_count.items():
 
-        resp.headers["X-Mode"] = "canary"
+        lines.append(
 
-    return resp
+            f'http_requests_total{{method="{method}",path="{path}",status_code="{status}"}} {count}'
 
-app.run(host="0.0.0.0", port=3000)
+        )
+
+    buckets = [0.1,0.3,0.5,1,2,5]
+
+    for b in buckets:
+
+        count = sum(1 for d in request_durations if d <= b)
+
+        lines.append(f'http_request_duration_seconds_bucket{{le="{b}"}} {count}')
+
+    lines.append(f'http_request_duration_seconds_bucket{{le="+Inf"}} {len(request_durations)}')
+
+    return "\n".join(lines), 200, {"Content-Type":"text/plain"}
+
+if __name__ == "__main__":
+
+    app.run(host="0.0.0.0", port=3000)

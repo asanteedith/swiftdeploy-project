@@ -1,368 +1,119 @@
-import yaml
-
 import os
-
-import subprocess
-
-import socket
-
-import time
-
+import sys
+import json
 import requests
+import time
+import shutil
 
-from jinja2 import Template
-
-# -----------------------------
-
-# LOAD & SAVE MANIFEST
-
-# -----------------------------
-
-def load_manifest():
-
-    with open("manifest.yaml") as f:
-
-        return yaml.safe_load(f)
-
-def save_manifest(data):
-
-    with open("manifest.yaml", "w") as f:
-
-        yaml.dump(data, f)
-
-# -----------------------------
-
-# TEMPLATE RENDER
-
-# -----------------------------
-
-def render_template(template_path, output_path, data):
-
-    with open(template_path) as f:
-
-        content = Template(f.read()).render(data)
-
-    with open(output_path, "w") as f:
-
-        f.write(content)
-
-# -----------------------------
-
-# INIT
-
-# -----------------------------
+# CONFIGURATION - Matches your Docker/OPA setup
+OPA_URL = "http://localhost:8181/v1/data"
+METRICS_URL = "http://localhost:8000/metrics"
+HISTORY_FILE = "history.jsonl"
+AUDIT_REPORT = "audit_report.md"
 
 def init():
+    """Requirement: Initialize the environment and policies directory."""
+    if not os.path.exists("policies"):
+        os.makedirs("policies")
+        print("📁 Created policies directory.")
+    # Create empty history file if it doesn't exist to prevent audit crashes
+    if not os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, "w") as f:
+            f.write(json.dumps({"event": "init", "time": time.time()}) + "\n")
+    print("✅ Initialization complete.")
 
-    data = load_manifest()
+def check_opa():
+    """Check if OPA sidecar is reachable."""
+    try:
+        response = requests.get("http://localhost:8181/v1/health", timeout=2)
+        return response.status_code == 200
+    except:
+        return False
 
-    render_template("templates/nginx.conf.tpl", "nginx.conf", data)
+def pre_deploy():
+    """Requirement 3A: Pre-deploy policy check."""
+    if not check_opa():
+        print("❌ OPA unavailable - cannot validate policies. Safety halt.")
+        return False
 
-    render_template("templates/docker-compose.yml.tpl", "docker-compose.yml", data)
-
-    print("✅ Config files generated")
-
-# -----------------------------
-
-# VALIDATE
-
-# -----------------------------
-
-def validate():
-
-    print("Running validation...\n")
-
-    # CHECK 1
-
-    if not os.path.exists("manifest.yaml"):
-
-        print("❌ FAIL: manifest.yaml missing")
-
-        exit(1)
+    total, used, free = shutil.disk_usage("/")
+    data = {
+        "input": {
+            "disk_free": free / (1024**3), # GB
+            "cpu_load": os.getloadavg()[0] if hasattr(os, 'getloadavg') else 0.5,
+            "thresholds": {"disk_min": 10, "cpu_max": 2.0}
+        }
+    }
 
     try:
-
-        data = load_manifest()
-
-        print("✅ PASS: manifest.yaml valid")
-
-    except Exception:
-
-        print("❌ FAIL: invalid YAML")
-
-        exit(1)
-
-    # CHECK 2
-
-    try:
-
-        assert data["services"]["image"]
-
-        assert data["services"]["port"]
-
-        assert data["nginx"]["image"]
-
-        assert data["nginx"]["port"]
-
-        assert data["network"]["name"]
-
-        assert data["network"]["driver_type"]
-
-        print("✅ PASS: required fields present")
-
-    except Exception:
-
-        print("❌ FAIL: missing required fields")
-
-        exit(1)
-
-    # CHECK 3
-
-    result = subprocess.run(
-
-        ["docker", "images", "-q", data["services"]["image"]],
-
-        capture_output=True,
-
-        text=True
-
-    )
-
-    if result.stdout.strip() == "":
-
-        print("❌ FAIL: docker image not found")
-
-        exit(1)
-
-    else:
-
-        print("✅ PASS: docker image exists")
-
-    # CHECK 4
-
-    s = socket.socket()
-
-    try:
-
-        s.bind(("localhost", data["nginx"]["port"]))
-
-        s.close()
-
-        print("✅ PASS: nginx port free")
-
-    except Exception:
-
-        print("❌ FAIL: port already in use")
-
-        exit(1)
-
-    # CHECK 5
-
-    try:
-
-        subprocess.run(
-
-            ["docker", "compose", "up", "-d"],
-
-            stdout=subprocess.DEVNULL,
-
-            stderr=subprocess.DEVNULL
-
-        )
-
-        result = subprocess.run(
-
-            ["docker", "compose", "exec", "-T", "nginx", "nginx", "-t"],
-
-            capture_output=True,
-
-            text=True
-
-        )
-
-        if "successful" in result.stdout.lower() or "successful" in result.stderr.lower():
-
-            print("✅ PASS: nginx.conf valid")
-
+        res = requests.post(f"{OPA_URL}/infra", json=data).json()
+        decision = res.get("result", {})
+        if decision.get("allow", False):
+            print("✅ Policy Check Passed: Infrastructure is healthy.")
+            return True
         else:
-
-            print("❌ FAIL: nginx.conf invalid")
-
-            print(result.stderr)
-
-            exit(1)
-
-    finally:
-
-        subprocess.run(
-
-            ["docker", "compose", "down"],
-
-            stdout=subprocess.DEVNULL,
-
-            stderr=subprocess.DEVNULL
-
-        )
-
-    print("\n🎉 ALL CHECKS PASSED")
-
-# -----------------------------
-
-# DEPLOY
-
-# -----------------------------
+            reason = decision.get("reason", "Unknown policy violation")
+            print(f"❌ BLOCKED: {reason}")
+            return False
+    except Exception as e:
+        print(f"❌ Policy Engine Error: {e}")
+        return False
 
 def deploy():
+    if not pre_deploy():
+        return
+    print("🚀 Deploying services...")
+    os.system("docker compose up -d")
 
-    print("🚀 Deploying...\n")
-
-    init()
-
-    subprocess.run(["docker", "compose", "up", "-d"])
-
-    start = time.time()
-
-    while time.time() - start < 60:
-
+def status():
+    """Requirement 3B: Real-time dashboard and history logging."""
+    print("📋 Monitoring Status (Ctrl+C to stop)...")
+    while True:
         try:
+            r = requests.get(METRICS_URL, timeout=3)
+            metrics_text = r.text
+            print(f"\n--- Scrape @ {time.ctime()} ---\n{metrics_text[:150]}...")
+            
+            with open(HISTORY_FILE, "a") as f:
+                f.write(json.dumps({"timestamp": time.time(), "metrics": metrics_text}) + "\n")
+        except Exception as e:
+            print(f"⚠️ Metrics unavailable: {e}")
+        time.sleep(5)
 
-            r = requests.get("http://localhost:8080/healthz")
+def audit():
+    """Requirement 3C: Generate audit_report.md from history."""
+    print("📝 Generating Audit Report...")
+    if not os.path.exists(HISTORY_FILE):
+        print("❌ No history found. Run 'status' first.")
+        return
 
-            if r.status_code == 200:
+    with open(HISTORY_FILE, "r") as f:
+        lines = f.readlines()
 
-                print("✅ Deployment successful")
-
-                return
-
-        except Exception:
-
-            pass
-
-        time.sleep(2)
-
-    print("❌ Deployment timeout")
-
-    exit(1)
-
-# -----------------------------
-
-# PROMOTE
-
-# -----------------------------
-
-def promote(mode):
-
-    if mode not in ["canary", "stable"]:
-
-        print("❌ Invalid mode")
-
-        exit(1)
-
-    data = load_manifest()
-
-    data["services"]["mode"] = mode
-
-    save_manifest(data)
-    print(f"🔁 Switching to {mode} mode...")
-
-    init()
-
-    subprocess.run(
-
-        ["docker", "compose", "up", "-d", "--no-deps", "--build", "app"]
-
-    )
-
-    time.sleep(5)
-
-    try:
-
-        r = requests.get("http://localhost:8080/healthz")
-
-        if r.status_code == 200:
-
-            print(f"✅ Promotion to {mode} successful")
-
-        else:
-
-            print("❌ Health check failed after promotion")
-
-    except Exception:
-
-        print("❌ Unable to verify service")
-
-# -----------------------------
-
-# TEARDOWN
-
-# -----------------------------
-
-def teardown(clean=False):
-
-    print("🧹 Tearing down...")
-
-    subprocess.run(["docker", "compose", "down", "-v"])
-
-    if clean:
-
-        if os.path.exists("nginx.conf"):
-
-            os.remove("nginx.conf")
-
-        if os.path.exists("docker-compose.yml"):
-
-            os.remove("docker-compose.yml")
-
-        print("🧼 Cleaned generated files")
-
-    print("✅ Teardown complete")
-
-# -----------------------------
-
-# MAIN
-
-# -----------------------------
+    with open(AUDIT_REPORT, "w") as out:
+        out.write("# SwiftDeploy Audit Report\n\n")
+        out.write("| Timestamp | Status | Metric Snippet |\n")
+        out.write("|-----------|--------|----------------|\n")
+        for line in lines[-20:]: # Last 20 scrapes
+            entry = json.loads(line)
+            ts = time.ctime(entry.get('timestamp', time.time()))
+            snippet = entry.get('metrics', 'N/A')[:40].replace('\n', ' ')
+            out.write(f"| {ts} | Active | {snippet}... |\n")
+    print(f"✅ Report generated: {AUDIT_REPORT}")
 
 if __name__ == "__main__":
-
-    import sys
-
     if len(sys.argv) < 2:
+        print("Usage: python swiftdeploy.py [init|deploy|status|audit]")
+        sys.exit(1)
 
-        print("Usage: python swiftdeploy.py <command>")
-
-        exit(1)
-
-    command = sys.argv[1]
-
-    if command == "init":
-
+    cmd = sys.argv[1]
+    if cmd == "init":
         init()
-
-    elif command == "validate":
-
-        validate()
-
-    elif command == "deploy":
-
+    elif cmd == "deploy":
         deploy()
-
-    elif command == "promote":
-
-        if len(sys.argv) < 3:
-
-            print("Usage: promote [canary|stable]")
-
-            exit(1)
-
-        promote(sys.argv[2])
-
-    elif command == "teardown":
-
-        clean = "--clean" in sys.argv
-
-        teardown(clean)
-
+    elif cmd == "status":
+        status()
+    elif cmd == "audit":
+        audit()
     else:
-
-        print("Unknown command")
+        print(f"Unknown command: {cmd}")

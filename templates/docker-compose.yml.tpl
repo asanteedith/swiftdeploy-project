@@ -4,29 +4,13 @@ services:
 
   app:
 
-    image: {{ services.image }}
+    build: ./app
 
-    environment:
-
-      - MODE={{ services.mode }}
-
-      - APP_VERSION={{ services.version }}
-
-      - APP_PORT={{ services.port }}
+    container_name: app
 
     networks:
 
       - {{ network.name }}
-
-    restart: always
-
-    healthcheck:
-
-      test: ["CMD", "curl", "-f", "http://localhost:{{ services.port }}/healthz"]
-
-      interval: 10s
-
-      retries: 5
 
   nginx:
 
@@ -38,11 +22,25 @@ services:
 
     volumes:
 
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf
 
     depends_on:
 
       - app
+
+    networks:
+
+      - {{ network.name }}
+
+  opa:
+
+    image: openpolicyagent/opa:latest
+
+    command: ["run", "--server", "/policies"]
+
+    volumes:
+
+      - ./policies:/policies
 
     networks:
 
@@ -53,7 +51,3 @@ networks:
   {{ network.name }}:
 
     driver: {{ network.driver_type }}
-
-volumes:
-
-  logs:
