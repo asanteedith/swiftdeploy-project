@@ -1,1 +1,10 @@
-{"event": "init", "time": 1778100496.8237965}
+{"timestamp": 1715160000, "metrics": "http_requests_total 100"} 
+{"timestamp": 1778101114.1493676, "metrics": "{\"detail\":\"Not Found\"}"}
+{"timestamp": 1778101119.177816, "metrics": "{\"detail\":\"Not Found\"}"}
+{"timestamp": 1778101124.1975832, "metrics": "{\"detail\":\"Not Found\"}"}
+{"timestamp": 1778101129.2148728, "metrics": "{\"detail\":\"Not Found\"}"}
+{"timestamp": 1778101134.224975, "metrics": "{\"detail\":\"Not Found\"}"}
+{"timestamp": 1778101171.8305252, "metrics": "{\"detail\":\"Not Found\"}"}
+{"timestamp": 1778101176.8496509, "metrics": "{\"detail\":\"Not Found\"}"}
+{"timestamp": 1778101181.8767076, "metrics": "{\"detail\":\"Not Found\"}"}
+{"timestamp": 1778101186.884481, "metrics": "{\"detail\":\"Not Found\"}"}
