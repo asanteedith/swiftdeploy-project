@@ -8,3 +8,8 @@
 {"timestamp": 1778101176.8496509, "metrics": "{\"detail\":\"Not Found\"}"}
 {"timestamp": 1778101181.8767076, "metrics": "{\"detail\":\"Not Found\"}"}
 {"timestamp": 1778101186.884481, "metrics": "{\"detail\":\"Not Found\"}"}
+{"timestamp": 1778102882.5128, "metrics": "status=online, cpu=0.5"}
+{"timestamp": 1778102887.5432591, "metrics": "status=online, cpu=0.5"}
+{"timestamp": 1778102892.5646033, "metrics": "status=online, cpu=0.5"}
+{"timestamp": 1778102897.581791, "metrics": "status=online, cpu=0.5"}
+{"timestamp": 1778102902.5982609, "metrics": "status=online, cpu=0.5"}

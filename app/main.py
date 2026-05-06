@@ -107,6 +107,7 @@ def chaos():
 @app.route("/metrics")
 
 def metrics():
+    return "http_requests_total 100"
 
     uptime = int(time.time() - start_time)
 
