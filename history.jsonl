@@ -1,52 +1,13 @@
-{"timestamp": 1715160000, "metrics": "http_requests_total 100"} 
-{"timestamp": 1778101114.1493676, "metrics": "{\"detail\":\"Not Found\"}"}
-{"timestamp": 1778101119.177816, "metrics": "{\"detail\":\"Not Found\"}"}
-{"timestamp": 1778101124.1975832, "metrics": "{\"detail\":\"Not Found\"}"}
-{"timestamp": 1778101129.2148728, "metrics": "{\"detail\":\"Not Found\"}"}
-{"timestamp": 1778101134.224975, "metrics": "{\"detail\":\"Not Found\"}"}
-{"timestamp": 1778101171.8305252, "metrics": "{\"detail\":\"Not Found\"}"}
-{"timestamp": 1778101176.8496509, "metrics": "{\"detail\":\"Not Found\"}"}
-{"timestamp": 1778101181.8767076, "metrics": "{\"detail\":\"Not Found\"}"}
-{"timestamp": 1778101186.884481, "metrics": "{\"detail\":\"Not Found\"}"}
-{"timestamp": 1778102882.5128, "metrics": "status=online, cpu=0.5"}
-{"timestamp": 1778102887.5432591, "metrics": "status=online, cpu=0.5"}
-{"timestamp": 1778102892.5646033, "metrics": "status=online, cpu=0.5"}
-{"timestamp": 1778102897.581791, "metrics": "status=online, cpu=0.5"}
-{"timestamp": 1778102902.5982609, "metrics": "status=online, cpu=0.5"}
-{"event": "init", "status": "success", "timestamp": 1778576441.443536}
-{"event": "init", "status": "success", "timestamp": 1778576635.5701463}
-{"event": "init", "status": "success", "timestamp": 1778576809.5069196}
-{"event": "init", "status": "success", "timestamp": 1778578059.643545}
-{"event": "init", "status": "success", "timestamp": 1778578225.5061302}
-{"event": "init", "status": "success", "timestamp": 1778578288.637045}
-{"event": "pre_deploy_check", "input": {"disk_free_gb": 103.3, "cpu_load": 0.25, "mem_percent": 91.8}, "result": {"allow": true, "reason": ""}, "timestamp": 1778578288.66371}
-{"event": "init", "status": "success", "timestamp": 1778584251.290268}
-{"event": "init", "status": "success", "timestamp": 1778584424.1477044}
-{"event": "pre_deploy_check", "input": {"disk_free_gb": 103.2, "cpu_load": 0.12, "mem_percent": 88.1}, "result": {"allow": true, "reason": ""}, "timestamp": 1778584424.2454286}
-{"event": "deploy", "status": "success", "timestamp": 1778584431.3180811}
-{"event": "status_scrape", "error": "metrics_unavailable", "timestamp": 1778584516.2765002}
-{"event": "status_scrape", "error": "metrics_unavailable", "timestamp": 1778584521.2974048}
-{"event": "status_scrape", "error": "metrics_unavailable", "timestamp": 1778584526.3240871}
-{"event": "status_scrape", "error": "metrics_unavailable", "timestamp": 1778584531.3424065}
-{"event": "status_scrape", "error": "metrics_unavailable", "timestamp": 1778584536.3760815}
-{"event": "status_scrape", "error": "metrics_unavailable", "timestamp": 1778584541.3900163}
-{"event": "status_scrape", "error": "metrics_unavailable", "timestamp": 1778584546.4063756}
-{"event": "status_scrape", "error": "metrics_unavailable", "timestamp": 1778584551.4263062}
-{"event": "init", "status": "success", "timestamp": 1778790432.8323998}
-{"event": "init", "status": "success", "timestamp": 1778790721.4438667}
-{"event": "pre_deploy_check", "input": {"disk_free_gb": 104.41, "cpu_load": 0.46, "mem_percent": 87.0}, "result": {"allow": true, "reason": ""}, "timestamp": 1778790721.559338}
-{"event": "deploy", "status": "success", "timestamp": 1778790729.432558}
-{"event": "init", "status": "success", "timestamp": 1778791345.13179}
-{"event": "pre_deploy_check", "input": {"disk_free_gb": 104.21, "cpu_load": 0.94, "mem_percent": 86.4}, "result": {"allow": true, "reason": ""}, "timestamp": 1778791345.1772406}
-{"event": "deploy", "status": "success", "timestamp": 1778791353.5138438}
-{"event": "init", "status": "success", "timestamp": 1778791719.9570317}
-{"event": "pre_deploy_check", "input": {"disk_free_gb": 104.21, "cpu_load": 0.33, "mem_percent": 84.6}, "result": {"allow": true, "reason": ""}, "timestamp": 1778791720.0149322}
-{"event": "deploy", "status": "success", "timestamp": 1778791727.568237}
-{"event": "status_scrape", "mode": "stable", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778791837.359083}
-{"event": "status_scrape", "mode": "stable", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778791842.4052138}
-{"event": "status_scrape", "mode": "stable", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778791847.496646}
-{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": true, "reason": ""}, "timestamp": 1778791955.4216404}
-{"event": "init", "status": "success", "timestamp": 1778791955.4472978}
-{"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778791964.0342667}
-{"event": "init", "status": "success", "timestamp": 1778792129.3410053}
-{"event": "promote", "mode": "stable", "status": "success", "timestamp": 1778792137.779135}
+{"event": "init", "status": "success", "timestamp": 1778794513.080651}
+{"event": "pre_deploy_check", "input": {"disk_free_gb": 104.18, "cpu_load": 0.36, "mem_percent": 86.1}, "result": {"allow": true, "reason": ""}, "timestamp": 1778794513.2550142}
+{"event": "deploy", "status": "success", "timestamp": 1778794519.2062175}
+{"event": "status_scrape", "mode": "stable", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778794537.9357994}
+{"event": "status_scrape", "mode": "stable", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778794543.0219245}
+{"event": "status_scrape", "mode": "stable", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778794548.1323018}
+{"event": "status_scrape", "mode": "stable", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778794553.2048206}
+{"event": "status_scrape", "mode": "stable", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778794558.266005}
+{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": true, "reason": ""}, "timestamp": 1778794577.1836562}
+{"event": "init", "status": "success", "timestamp": 1778794577.1936376}
+{"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778794585.9404254}
+{"event": "init", "status": "success", "timestamp": 1778794600.2426972}
+{"event": "promote", "mode": "stable", "status": "success", "timestamp": 1778794608.2654293}
