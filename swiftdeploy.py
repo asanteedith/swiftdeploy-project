@@ -322,7 +322,8 @@ def audit():
                 details = f"mode={entry.get('mode','?')} error_rate={entry.get('error_rate','?')}% p99={entry.get('p99_latency_ms','?')}ms"
             elif event in ["pre_deploy_check", "pre_promote_check"]:
                 result = entry.get("result", {})
-                details = f"allow={result.get('allow')} reason={result.get('reason','')}"
+                status = "PASSED" if result.get("allow") else "BLOCKED"
+                details = f"{status} | reason={result.get('reason','')}"
             out.write(f"| {ts} | {event} | {details} |\n")
         violations = [e for e in lines if e.get("event") in ["pre_deploy_check", "pre_promote_check"] and not e.get("result", {}).get("allow", True)]
         out.write("\n## Policy Violations\n\n")
