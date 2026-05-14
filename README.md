@@ -1,235 +1,226 @@
-Live Demo: http://localhost:8080
-# SwiftDeploy Project
+# SwiftDeploy — Declarative Infrastructure CLI
 
-SwiftDeploy is a CLI tool that builds, deploys, and manages a containerized application stack from a single declarative manifest.yaml.
-Instead of manually configuring infrastructure, SwiftDeploy generates all required configurations and controls the lifecycle of the system.
+> **A CLI tool that generates your entire infrastructure from a single file, enforces deployment policies automatically, and gives you full visibility into every decision it makes.**
 
-⸻
+---
 
+## Why SwiftDeploy?
 
-# Project Overview
-This project implements:
- • Declarative infrastructure using YAML
- • Automatic generation of:
- ◦ nginx.conf
- ◦ docker-compose.yml
- • Container lifecycle management
- • Canary and stable deployment modes
- • Health checks and validation
+Most deployment tools ask you to manually write Dockerfiles, Nginx configs, and Compose files — then hope everything is consistent. SwiftDeploy flips that model.
 
+**You edit one file. SwiftDeploy handles everything else.**
 
-manifest.yaml
+-  **Policy-gated** — deploys only when OPA approves. No human needed to check if the server has enough disk or if the canary is healthy
+-  **Observable** — real-time metrics, live dashboard, and a full audit trail of every decision
+-  **Reproducible** — delete all generated files and run `init` again. You get the exact same stack
+-  **Fast** — one command from zero to running stack with health checks
+-  **Smart** — the tool thinks before it acts. It checks policies, scrapes metrics, and blocks unsafe operations automatically
 
-      ↓
+---
 
-swiftdeploy CLI
+## Live Demo
+- GitHub: https://github.com/asanteedith/swiftdeploy-project
+- Blog: https://dev.to/edithasante/building-a-policy-gated-deployment-system-with-observability-swiftdeploy-stage-4b-4od2
 
-      ↓
+---
 
-nginx.conf + docker-compose.yml
+## Prerequisites
+- Python 3.10+
+- Docker Desktop
+- pip packages: `pyyaml requests psutil`
 
-      ↓
+---
 
-Docker Compose
+## Quick Start
 
-      ↓
-
-Nginx → API ServiceArchitecture
-
-
-
-⸻
-
-
-# Project Structure
-swiftdeploy-project/
-
-│
-
-├── manifest.yaml
-
-├── swiftdeploy.py
-
-├── nginx.conf
-
-├── docker-compose.yml
-
-│
-
-├── app/
-
-│   ├── main.py
-
-│   └── Dockerfile
-
-│
-
-├── templates/
-
-│   ├── nginx.conf.tpl
-
-│   └── docker-compose.yml.tpl
-
-│
-
-└── README.md
-
-⸻
-
-
- # Setup
-
-Requirements
-
-Python 
-Docker & Docker Compose
-
-⸻
-
-
-# Install dependencies
-pip install pyyaml jinja2 requests
-
-⸻
-
-# Usage
-
-1. Generate configuration files
-python swiftdeploy.py init
-
-⸻
-
-
-# 2. Validate setup
-
-Runs 5 pre-flight checks:
-
-manifest validity
-required fields
-docker image existence
-nginx port availability
-nginx configuration validity
-
-python swiftdeploy.py validate
-
-⸻
-
-
-# 3. Deploy stack
- • Generates configs
- • Starts containers
- • Waits for /healthz (max 60s)
-
+```bash
+git clone https://github.com/asanteedith/swiftdeploy-project.git
+cd swiftdeploy-project
+pip install pyyaml requests psutil
+docker compose up -d opa
 python swiftdeploy.py deploy
+```
 
-⸻
+That is it. One command deploys Nginx, your app, and the OPA policy engine — after verifying your infrastructure is healthy enough to handle it.
 
+---
 
-# 4. Promote deployment
+## How It Works
 
-Switch to canary mode
+```
+manifest.yaml  ← the only file you edit
+     |
+swiftdeploy CLI
+     |
+docker-compose.yml + nginx.conf  ← generated automatically
+     |
+Docker Network
+     |
+[Nginx] → [App (/metrics)] → [OPA Policy Engine]
+     |
+CLI reads metrics → sends to OPA → deploy or block
+```
+
+---
+
+## Subcommands
+
+### `init`
+Parses `manifest.yaml` and generates `nginx.conf` and `docker-compose.yml` from templates.
+
+**Value:** Delete your configs anytime. One command regenerates everything perfectly.
+
+```bash
+python swiftdeploy.py init
+```
+
+---
+
+### `validate`
+Runs 5 pre-flight checks before anything touches your server.
+
+**Value:** Catches problems before they cause downtime — wrong image, port conflict, bad config.
+
+```bash
+python swiftdeploy.py validate
+```
+
+Checks:
+1. `manifest.yaml` exists and is valid YAML
+2. All required fields are present and non-empty
+3. Docker image exists locally
+4. Nginx port is not already in use
+5. `nginx.conf` is syntactically valid
+
+---
+
+### `deploy`
+Runs `init`, queries OPA for infrastructure policy approval, brings up the full stack, and waits for health checks to pass.
+
+**Value:** You never deploy to an unhealthy server again. OPA checks disk space and CPU load before a single container starts.
+
+```bash
+python swiftdeploy.py deploy
+```
+
+---
+
+### `promote`
+Switches deployment mode with a rolling restart. Canary promotion requires OPA canary safety approval.
+
+**Value:** You can never accidentally promote a broken canary. SwiftDeploy scrapes live metrics and blocks promotion if error rate or latency is too high.
+
+```bash
 python swiftdeploy.py promote canary
-
-Switch back to stable
 python swiftdeploy.py promote stable
+```
 
-⸻
+---
 
+### `teardown`
+Removes all containers, networks, and volumes cleanly.
 
- # 5. Teardown
-
-Stops and removes all resources:
+```bash
 python swiftdeploy.py teardown
-Remove generated files as well:
+python swiftdeploy.py teardown --clean  # also deletes generated configs
+```
 
-python swiftdeploy.py teardown --clean
+---
 
-⸻
+### `status`
+Live terminal dashboard that scrapes `/metrics` every 5 seconds and shows real-time system state and policy compliance.
 
+**Value:** You see exactly what is happening — mode, error rate, latency, and whether OPA policies are currently passing or failing.
 
-# API Endpoints
-GET 
-/
-Returns:
- • message
- • mode (stable/canary)
- • version
- • timestamp
+```bash
+python swiftdeploy.py status
+```
 
+Output:
+```
+--- Scrape @ Fri May 15 09:50:37 2026 ---
+  Mode:        stable
+  Uptime:      115s
+  Error rate:  0.0%
+  P99 latency: 100.0ms
+  Chaos:       none
 
+  Policy Compliance:
+    Infrastructure: ✅ PASS
+    Canary safety:  ✅ PASS
+```
 
-GET 
-/healthz
-Returns:
- • status
- • uptime (seconds)
+---
 
+### `audit`
+Generates `audit_report.md` from `history.jsonl` — a full timeline of every deploy, promote, and policy decision.
 
+**Value:** Complete accountability. You can always answer "what happened and why" with a single command.
 
-POST 
-/chaos
-(canary only)
+```bash
+python swiftdeploy.py audit
+```
 
+---
 
-⸻
+## OPA Policies
 
-# Simulates failures:
+All deployment decisions are made by OPA — the CLI never makes allow/deny decisions itself.
 
-# • Slow response:
+### Infrastructure Policy (pre-deploy)
+```rego
+allow := true if {
+    input.disk_free_gb >= 10
+    input.cpu_load <= 2.0
+}
+```
+Blocks deployment if disk free < 10GB or CPU load > 2.0
 
- { "mode": "slow", "duration": 3 }
+### Canary Safety Policy (pre-promote)
+```rego
+allow := true if {
+    input.error_rate <= 1.0
+    input.p99_latency_ms <= 500
+}
+```
+Blocks canary promotion if error rate > 1% or P99 latency > 500ms
 
+---
 
- # Random errors:
- { "mode": "error", "rate": 0.5 }
+## API Endpoints
 
- # Recover
- { "mode": "recover" }
+| Endpoint | Method | Description |
+|---|---|---|
+| `/` | GET | Welcome message with mode, version, timestamp |
+| `/healthz` | GET | Liveness check with uptime in seconds |
+| `/chaos` | POST | Inject chaos — slow, error, or recover (canary only) |
+| `/metrics` | GET | Prometheus format metrics |
 
- ⸻
+---
 
+## Manifest Reference
 
-  # Deployment Modes
+```yaml
+services:
+  image: swift-deploy-1-node:latest
+  port: 3000
+  mode: stable
+  version: v1
 
- • Stable → normal operation
- • Canary → adds X-Mode: canary header and enables chaos testing
+nginx:
+  image: nginx:latest
+  port: 8080
+  proxy_timeout: 60
 
+network:
+  name: swiftdeploy-net
+  driver_type: bridge
+```
 
- ⸻
+`manifest.yaml` is the **single source of truth**. All generated files derive from it.
 
+---
 
-
-# Notes
- • manifest.yaml is the single source of truth
- • Generated files must not be edited manually
- • All infrastructure is derived from the manifest
-
-
-
-# ✅ Validation Checklist
- • init regenerates configs
- • validate passes all checks
- • deploy succeeds
- • promote canary/stable works
- • teardown --clean works
-
- ⸻
-
-
-
-# Submission
-Include:
- • Validation output
- • Deployment output
- • Promotion confirmation
- • Generated configs
- • Nginx access logs
-
- ⸻
-
-
-
- # Author
-Built as part of the HNG DevOps Stage 4 task.
-
-
+## Author
+**Edith Asante** — Cloud & DevOps Engineer
+## As part of HNG Internship Stage 4
