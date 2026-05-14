@@ -7,11 +7,10 @@ allow := true if {
     input.cpu_load <= 2.0
 }
 
-reason := "Disk space too low (must be >= 10GB)" if {
+reason := "Disk space too low" if {
     input.disk_free_gb < 10
 }
 
-reason := "CPU load too high (must be <= 2.0)" if {
+reason := "CPU load too high" if {
     input.cpu_load > 2.0
-    input.disk_free_gb >= 10
 }
