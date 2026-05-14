@@ -11,3 +11,31 @@
 {"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778794585.9404254}
 {"event": "init", "status": "success", "timestamp": 1778794600.2426972}
 {"event": "promote", "mode": "stable", "status": "success", "timestamp": 1778794608.2654293}
+{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": true, "reason": ""}, "timestamp": 1778795777.037853}
+{"event": "init", "status": "success", "timestamp": 1778795777.0613809}
+{"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778795786.2885377}
+{"event": "init", "status": "success", "timestamp": 1778795874.6226554}
+{"event": "promote", "mode": "stable", "status": "success", "timestamp": 1778795882.9712033}
+{"event": "init", "status": "success", "timestamp": 1778795977.9283683}
+{"event": "promote", "mode": "stable", "status": "success", "timestamp": 1778795984.0017855}
+{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": true, "reason": ""}, "timestamp": 1778796063.9044268}
+{"event": "init", "status": "success", "timestamp": 1778796063.9265146}
+{"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778796072.2030077}
+{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": true, "reason": ""}, "timestamp": 1778796375.4870756}
+{"event": "init", "status": "success", "timestamp": 1778796375.5012112}
+{"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778796381.216913}
+{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": true, "reason": ""}, "timestamp": 1778796572.2416532}
+{"event": "init", "status": "success", "timestamp": 1778796572.252047}
+{"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778796577.9969907}
+{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": true, "reason": ""}, "timestamp": 1778796888.3830178}
+{"event": "init", "status": "success", "timestamp": 1778796888.3948143}
+{"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778796894.6054869}
+{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": true, "reason": ""}, "timestamp": 1778799035.5542336}
+{"event": "init", "status": "success", "timestamp": 1778799035.5707932}
+{"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778799041.278354}
+{"event": "init", "status": "success", "timestamp": 1778799195.545239}
+{"event": "promote", "mode": "stable", "status": "success", "timestamp": 1778799203.596899}
+{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": false, "reason": ""}, "timestamp": 1778799306.585145}
+{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": true, "reason": ""}, "timestamp": 1778799525.8471384}
+{"event": "init", "status": "success", "timestamp": 1778799525.863072}
+{"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778799535.0318196}

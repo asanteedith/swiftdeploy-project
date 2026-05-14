@@ -1,6 +1,6 @@
 # SwiftDeploy Audit Report
 
-Generated: Fri May 15 10:37:06 2026
+Generated: Fri May 15 12:05:13 2026
 
 ## Timeline
 
@@ -19,7 +19,37 @@ Generated: Fri May 15 10:37:06 2026
 | Fri May 15 10:36:25 2026 | promote | mode=canary status=success |
 | Fri May 15 10:36:40 2026 | init |  |
 | Fri May 15 10:36:48 2026 | promote | mode=stable status=success |
+| Fri May 15 10:56:17 2026 | pre_promote_check | allow=True reason= |
+| Fri May 15 10:56:17 2026 | init |  |
+| Fri May 15 10:56:26 2026 | promote | mode=canary status=success |
+| Fri May 15 10:57:54 2026 | init |  |
+| Fri May 15 10:58:02 2026 | promote | mode=stable status=success |
+| Fri May 15 10:59:37 2026 | init |  |
+| Fri May 15 10:59:44 2026 | promote | mode=stable status=success |
+| Fri May 15 11:01:03 2026 | pre_promote_check | allow=True reason= |
+| Fri May 15 11:01:03 2026 | init |  |
+| Fri May 15 11:01:12 2026 | promote | mode=canary status=success |
+| Fri May 15 11:06:15 2026 | pre_promote_check | allow=True reason= |
+| Fri May 15 11:06:15 2026 | init |  |
+| Fri May 15 11:06:21 2026 | promote | mode=canary status=success |
+| Fri May 15 11:09:32 2026 | pre_promote_check | allow=True reason= |
+| Fri May 15 11:09:32 2026 | init |  |
+| Fri May 15 11:09:37 2026 | promote | mode=canary status=success |
+| Fri May 15 11:14:48 2026 | pre_promote_check | allow=True reason= |
+| Fri May 15 11:14:48 2026 | init |  |
+| Fri May 15 11:14:54 2026 | promote | mode=canary status=success |
+| Fri May 15 11:50:35 2026 | pre_promote_check | allow=True reason= |
+| Fri May 15 11:50:35 2026 | init |  |
+| Fri May 15 11:50:41 2026 | promote | mode=canary status=success |
+| Fri May 15 11:53:15 2026 | init |  |
+| Fri May 15 11:53:23 2026 | promote | mode=stable status=success |
+| Fri May 15 11:55:06 2026 | pre_promote_check | allow=False reason= |
+| Fri May 15 11:58:45 2026 | pre_promote_check | allow=True reason= |
+| Fri May 15 11:58:45 2026 | init |  |
+| Fri May 15 11:58:55 2026 | promote | mode=canary status=success |
 
 ## Policy Violations
 
-No policy violations recorded.
+| Time | Check | Reason |
+|---|---|---|
+| Fri May 15 11:55:06 2026 | pre_promote_check |  |
