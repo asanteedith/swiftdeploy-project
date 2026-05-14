@@ -1,20 +1,17 @@
 package canary
 
-default allow = false
+default allow := false
 
-# Allow only if performance is within limits
-allow {
-    input.error_rate <= input.thresholds.max_error
-    input.p99_latency <= input.thresholds.max_latency
+allow := true if {
+    input.error_rate <= 1.0
+    input.p99_latency_ms <= 500
 }
 
-# Specific reasons for failure
-reason = "Error rate too high" {
-    input.error_rate > input.thresholds.max_error
+reason := "Error rate too high (must be <= 1%)" if {
+    input.error_rate > 1.0
 }
 
-reason = "Latency too high" {
-    input.p99_latency > input.thresholds.max_latency
+reason := "P99 latency too high (must be <= 500ms)" if {
+    input.p99_latency_ms > 500
+    input.error_rate <= 1.0
 }
-
-default reason = "Canary health check failed"

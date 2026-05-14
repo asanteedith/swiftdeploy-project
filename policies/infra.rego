@@ -1,22 +1,17 @@
 package infra
 
-# By default, we don't allow unless conditions are met
-default allow = false
+default allow := false
 
-# Allow only if BOTH conditions are true
-allow {
-    input.disk_free >= input.thresholds.disk_min
-    input.cpu_load <= input.thresholds.cpu_max
+allow := true if {
+    input.disk_free_gb >= 10
+    input.cpu_load <= 2.0
 }
 
-# Provide the reason if it's NOT allowed
-reason = "Disk below 10GB" {
-    input.disk_free < input.thresholds.disk_min
+reason := "Disk space too low (must be >= 10GB)" if {
+    input.disk_free_gb < 10
 }
 
-reason = "CPU load above 2.0" {
-    input.cpu_load > input.thresholds.cpu_max
+reason := "CPU load too high (must be <= 2.0)" if {
+    input.cpu_load > 2.0
+    input.disk_free_gb >= 10
 }
-
-# Fallback reason
-default reason = "Infrastructure health check failed"

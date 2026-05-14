@@ -1,57 +1,56 @@
-version: "3.8"
-
-
-
 services:
-
   app:
-
-    build: ./app
-
+    image: swift-deploy-1-node:latest
     container_name: app
-
     environment:
-
       - MODE=stable
-
       - APP_PORT=3000
-
+      - APP_VERSION=v1
     networks:
-
       - swiftdeploy-net
-
-    restart: always
+    restart: unless-stopped
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - logs:/app/logs
 
   nginx:
-
     image: nginx:latest
-
     container_name: nginx
-
     ports:
-
       - "8080:80"
-
     volumes:
-
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-
     depends_on:
-
       - app
-
     networks:
-
       - swiftdeploy-net
+    restart: unless-stopped
 
-    restart: always
+  opa:
+    image: openpolicyagent/opa:latest
+    container_name: opa
+    command:
+      - "run"
+      - "--server"
+      - "--addr=0.0.0.0:8181"
+      - "/policies"
+    volumes:
+      - ./policies:/policies:ro
+    networks:
+      - swiftdeploy-net
+    restart: unless-stopped
+    ports:
+      - "8181:8181"
 
 networks:
-
   swiftdeploy-net:
-
     driver: bridge
 
 volumes:
-
   logs:
