@@ -1,20 +1,11 @@
-{"event": "init", "status": "success", "timestamp": 1778801801.0621347}
-{"event": "pre_deploy_check", "input": {"disk_free_gb": 104.17, "cpu_load": 0.92, "mem_percent": 85.4}, "result": {"allow": true, "reason": ""}, "timestamp": 1778801801.121446}
-{"event": "deploy", "status": "success", "timestamp": 1778801808.9807713}
-{"event": "status_scrape", "mode": "canary", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778801875.7994368}
-{"event": "status_scrape", "mode": "canary", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778801880.8605766}
-{"event": "status_scrape", "mode": "canary", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778801885.924964}
-{"event": "status_scrape", "mode": "canary", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778801890.984175}
-{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": true, "reason": ""}, "timestamp": 1778801915.2705133}
-{"event": "init", "status": "success", "timestamp": 1778801915.2805197}
-{"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778801921.0268216}
-{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": false, "reason": ""}, "timestamp": 1778802017.6302288}
-{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": true, "reason": ""}, "timestamp": 1778802284.6205053}
-{"event": "init", "status": "success", "timestamp": 1778802284.6396892}
-{"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778802290.286228}
-{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": false, "reason": ""}, "timestamp": 1778803583.8536086}
-{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": false, "reason": "P99 latency too high (must be <= 50ms)"}, "timestamp": 1778803836.5438986}
-{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": false, "reason": "P99 latency too high (must be <= 50ms)"}, "timestamp": 1778803925.199936}
-{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": true, "reason": "Canary metrics within safe thresholds"}, "timestamp": 1778803948.8983014}
-{"event": "init", "status": "success", "timestamp": 1778803948.91591}
-{"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778803954.617231}
+{"event": "init", "status": "success", "timestamp": 1778804317.3219147}
+{"event": "pre_deploy_check", "input": {"disk_free_gb": 104.15, "cpu_load": 0.53, "mem_percent": 86.2}, "result": {"allow": true, "reason": ""}, "timestamp": 1778804317.3567715}
+{"event": "deploy", "status": "success", "timestamp": 1778804325.108281}
+{"event": "status_scrape", "mode": "canary", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778804344.9909654}
+{"event": "status_scrape", "mode": "canary", "error_rate": 0.0, "p99_latency_ms": 100.0, "chaos_active": 0.0, "timestamp": 1778804350.0915225}
+{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": true, "reason": "Canary metrics within safe thresholds"}, "timestamp": 1778804374.0610611}
+{"event": "init", "status": "success", "timestamp": 1778804374.0741885}
+{"event": "promote", "mode": "canary", "status": "success", "timestamp": 1778804379.794434}
+{"event": "pre_promote_check", "input": {"error_rate": 0.0, "p99_latency_ms": 100.0}, "result": {"allow": false, "reason": "P99 latency too high (must be <= 50ms)"}, "timestamp": 1778804415.496453}
+{"event": "init", "status": "success", "timestamp": 1778804452.6190243}
+{"event": "promote", "mode": "stable", "status": "success", "timestamp": 1778804461.1108687}
