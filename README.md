@@ -11,7 +11,7 @@ Most deployment tools ask you to manually write Dockerfiles, Nginx configs, and 
 **You edit one file. SwiftDeploy handles everything else.**
 
 -  **Policy-gated** — deploys only when OPA approves. No human needed to check if the server has enough disk or if the canary is healthy
--  **Observable** — real-time metrics, live dashboard, and a full audit trail of every decision
+- **Observable** — real-time metrics, live dashboard, and a full audit trail of every decision
 -  **Reproducible** — delete all generated files and run `init` again. You get the exact same stack
 -  **Fast** — one command from zero to running stack with health checks
 -  **Smart** — the tool thinks before it acts. It checks policies, scrapes metrics, and blocks unsafe operations automatically
@@ -146,8 +146,8 @@ Output:
   Chaos:       none
 
   Policy Compliance:
-    Infrastructure: ✅ PASS
-    Canary safety:  ✅ PASS
+    Infrastructure: PASS
+    Canary safety:  PASS
 ```
 
 ---
@@ -187,6 +187,34 @@ Blocks canary promotion if error rate > 1% or P99 latency > 500ms
 
 ---
 
+## Policy Enforcement in Action
+
+When a canary promotion is attempted with metrics outside safe thresholds SwiftDeploy blocks it automatically:
+
+```
+Running pre-promote policy check...
+   Error rate: 0.0% | P99 latency: 100.0ms
+Canary safety policy: BLOCKED
+   Reason: Latency too high (must be <= 500ms)
+```
+
+The blocked event is recorded in the audit report:
+
+```
+| Fri May 15 12:40:17 2026 | pre_promote_check | BLOCKED | reason= |
+```
+
+And appears in the Policy Violations section:
+
+```
+## Policy Violations
+| Time | Check | Reason |
+|---|---|---|
+| Fri May 15 12:40:17 2026 | pre_promote_check | Latency too high |
+```
+
+---
+
 ## API Endpoints
 
 | Endpoint | Method | Description |
@@ -223,4 +251,4 @@ network:
 
 ## Author
 **Edith Asante** — Cloud & DevOps Engineer
-## As part of HNG Internship Stage 4
+## As part of HNG Internship stage 4
