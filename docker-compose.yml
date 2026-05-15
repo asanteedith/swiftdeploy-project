@@ -3,7 +3,7 @@ services:
     image: swift-deploy-1-node:latest
     container_name: app
     environment:
-      - MODE=stable
+      - MODE=canary
       - APP_PORT=3000
       - APP_VERSION=v1
     networks:

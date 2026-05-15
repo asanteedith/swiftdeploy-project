@@ -1,6 +1,6 @@
 # SwiftDeploy Audit Report
 
-Generated: Fri May 15 12:46:10 2026
+Generated: Fri May 15 13:13:37 2026
 
 ## Timeline
 
@@ -20,9 +20,18 @@ Generated: Fri May 15 12:46:10 2026
 | Fri May 15 12:44:44 2026 | pre_promote_check | PASSED | reason= |
 | Fri May 15 12:44:44 2026 | init |  |
 | Fri May 15 12:44:50 2026 | promote | mode=canary status=success |
+| Fri May 15 13:06:23 2026 | pre_promote_check | BLOCKED | reason= |
+| Fri May 15 13:10:36 2026 | pre_promote_check | BLOCKED | reason=P99 latency too high (must be <= 50ms) |
+| Fri May 15 13:12:05 2026 | pre_promote_check | BLOCKED | reason=P99 latency too high (must be <= 50ms) |
+| Fri May 15 13:12:28 2026 | pre_promote_check | PASSED | reason=Canary metrics within safe thresholds |
+| Fri May 15 13:12:28 2026 | init |  |
+| Fri May 15 13:12:34 2026 | promote | mode=canary status=success |
 
 ## Policy Violations
 
 | Time | Check | Reason |
 |---|---|---|
 | Fri May 15 12:40:17 2026 | pre_promote_check |  |
+| Fri May 15 13:06:23 2026 | pre_promote_check |  |
+| Fri May 15 13:10:36 2026 | pre_promote_check | P99 latency too high (must be <= 50ms) |
+| Fri May 15 13:12:05 2026 | pre_promote_check | P99 latency too high (must be <= 50ms) |

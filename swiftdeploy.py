@@ -227,7 +227,7 @@ def promote(mode):
         p99 = calc_p99_latency(metrics)
         input_data = {"error_rate": error_rate, "p99_latency_ms": p99}
         print(f"   Error rate: {error_rate}% | P99 latency: {p99}ms")
-        result = query_opa("canary/allow", input_data)
+        result = query_opa("canary", input_data)
         allowed = result.get("allow", False)
         reason = result.get("reason", "No reason provided")
         write_history({"event": "pre_promote_check", "input": input_data, "result": result})
@@ -361,6 +361,7 @@ if __name__ == "__main__":
         print(f"Unknown command: {cmd}")
         print("Usage: python swiftdeploy.py [init|validate|deploy|promote|teardown|status|audit]")
         sys.exit(1)
+
 
 
 
